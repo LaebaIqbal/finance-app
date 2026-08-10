@@ -1,1 +1,3 @@
+#include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
+nano ios/Flutter/Release.xcconfig
 #include "Generated.xcconfig"
