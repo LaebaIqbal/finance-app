@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'spending_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -66,7 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
             GestureDetector(
                 onTap: (){
-                    print("Budget wurde geklickt!");
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SpendingScreen(),
+            ),
+                    );
                 },
 
               child:Container(
