@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -12,12 +13,28 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+//ggf später Fehler ausgeben bei Login
+  String errorMessage = "";
+
+//wenn man auf login drückt
   void login() {
     String email = emailController.text;
     String password = passwordController.text;
 
-    print("Email: $email");
-    print("Passwort: $password");
+    if (email == "test@mail.com" && password == "1234"){
+      //zur HomeScreen weiterleiten
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+       );
+    }
+    else{
+      setState((){
+        errorMessage = "E-mail or password not correct!";
+      });
+    }
   }
 
   @override
@@ -83,6 +100,12 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: login,
               child: const Text("Login"),
             ),
+            Text(
+              errorMessage,
+              style: const TextStyle(
+                color: Colors.white,
+              ),
+            )
           ],
         ),
       ),
