@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'spending_screen.dart';
+import '../models/spending_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -82,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.deepPurple,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -96,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(height: 8),
 
                   Text(
-                    "€ 450.00",
+                    "€ ${SpendingData.remainingBudget.toStringAsFixed(2)}",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 32,

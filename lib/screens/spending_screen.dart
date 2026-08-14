@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/spending.dart';
+import '../models/spending_data.dart';
 
 class SpendingScreen extends StatefulWidget {
   const SpendingScreen({super.key});
@@ -9,20 +10,13 @@ class SpendingScreen extends StatefulWidget {
 }
 
 class _SpendingScreenState extends State<SpendingScreen> {
-  // Gesamtbudget für den Monat
-  final double monthlyBudget = 500.0;
 
-  final List<Spending> spendings = [
-    Spending(name: "Restaurant", amount: 25, date: DateTime.now()),
-    Spending(name: "Supermarkt", amount: 50, date: DateTime.now().subtract(const Duration(days: 1))),
-    Spending(name: "Kino", amount: 30, date: DateTime.now().subtract(const Duration(days: 3))),
-  ];
 
-  // Gesamtausgaben berechnen
-  double get totalSpent => spendings.fold(0.0, (sum, item) => sum + item.amount);
+  List<Spending> get spendings => SpendingData.spendings;
+    double get monthlyBudget => SpendingData.monthlyBudget;
+    double get totalSpent => SpendingData.totalSpent;
+    double get remainingBudget => SpendingData.remainingBudget;
 
-  // Verbleibendes Budget
-  double get remainingBudget => monthlyBudget - totalSpent;
 
   // Fortschritt in Prozent (0.0 bis 1.0)
   double get progress => (totalSpent / monthlyBudget).clamp(0.0, 1.0);
@@ -33,6 +27,90 @@ class _SpendingScreenState extends State<SpendingScreen> {
     final month = date.month.toString().padLeft(2, '0');
     return "$day.$month.${date.year}";
   }
+
+  void openAddSpendingSheet() {                                          
+        final nameController = TextEditingController();                      
+        final amountController = TextEditingController();                    
+                                                                             
+        showModalBottomSheet(                                                
+          context: context,                                                  
+          isScrollControlled: true,                                          
+          shape: const RoundedRectangleBorder(                               
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),   
+          ),                                                                 
+          builder: (context) {                                               
+            return Padding(                                                  
+              padding: EdgeInsets.only(                                      
+                top: 20,                                                     
+                left: 20,                                                    
+                right: 20,                                                   
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,       
+              ),                                                             
+              child: Column(                                                 
+                mainAxisSize: MainAxisSize.min,                              
+                crossAxisAlignment: CrossAxisAlignment.stretch,              
+                children: [                                                  
+                  const Text(                                                
+                    "Neue Ausgabe eintragen",                                
+                    textAlign: TextAlign.center,                             
+                    style: TextStyle(                                        
+                      fontSize: 18,                                          
+                      fontWeight: FontWeight.bold,                           
+                    ),                                                       
+                  ),                                                         
+                  const SizedBox(height: 16),                                
+                  TextField(                                                 
+                    controller: nameController,                              
+                    decoration: const InputDecoration(                       
+                      labelText: "Wofür? (z. B. Restaurant)",                
+                      border: OutlineInputBorder(),                          
+                    ),                                                       
+                  ),                                                         
+                  const SizedBox(height: 12),                                
+                  TextField(                                                 
+                    controller: amountController,                            
+                    keyboardType: const TextInputType.                       
+  numberWithOptions(decimal: true),                                          
+                    decoration: const InputDecoration(                       
+                      labelText: "Betrag in €",                              
+                      border: OutlineInputBorder(),                          
+                    ),                                                       
+                  ),                                                         
+                  const SizedBox(height: 16),                                
+                  ElevatedButton(                                            
+                    style: ElevatedButton.styleFrom(                         
+                      backgroundColor: Colors.deepPurple,                    
+                      foregroundColor: Colors.white,                         
+                      padding: const EdgeInsets.symmetric(vertical: 14),     
+                    ),                                                       
+                    onPressed: () {                                          
+                      final name = nameController.text.trim();               
+                      final amount = double.tryParse(amountController.text.  
+  replaceAll(',', '.')) ?? 0.0;                                              
+                                                                             
+                      if (name.isNotEmpty && amount > 0) {                   
+                        setState(() {                                        
+                          SpendingData.spendings.add(                        
+                            Spending(                                        
+                              name: name,                                    
+                              amount: amount,                                
+                              date: DateTime.now(),                          
+                            ),                                               
+                          );                                                 
+                        });                                                  
+                        Navigator.pop(context);                              
+                      }                                                      
+                    },                                                       
+                    child: const Text("Hinzufügen", style:                   
+  TextStyle(fontSize: 16)),                                                  
+                  ),                                                         
+                ],                                                           
+              ),                                                             
+            );                                                               
+          },                                                                 
+        );                                                                   
+      }                                                                      
+          
 
   @override
   Widget build(BuildContext context) {
@@ -200,6 +278,11 @@ class _SpendingScreenState extends State<SpendingScreen> {
           ],
         ),
       ),
+    floatingActionButton: FloatingActionButton(                    
+                backgroundColor: Colors.deepPurple,                          
+                onPressed: openAddSpendingSheet,
+                child: const Icon(Icons.add, color: Colors.white),           
+              ), 
     );
   }
 }
