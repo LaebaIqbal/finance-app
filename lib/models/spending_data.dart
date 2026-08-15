@@ -6,11 +6,11 @@ import 'spending.dart';
       static double monthlyBudget = 500.0;                                   
                                                                              
       static List<Spending> spendings = [                                    
-        Spending(name: "Restaurant", amount: 25, date: DateTime.now()),      
+        Spending(name: "Restaurant", amount: 25, date: DateTime.now(), category: SpendingCategory.food),      
         Spending(name: "Supermarkt", amount: 50, date: DateTime.now().       
-  subtract(const Duration(days: 1))),                                        
+  subtract(const Duration(days: 1)), category: SpendingCategory.food),                                        
         Spending(name: "Kino", amount: 30, date: DateTime.now().             
-  subtract(const Duration(days: 3))),                                        
+  subtract(const Duration(days: 3)), category: SpendingCategory.leisure),                                        
       ];                                                                     
                                                                              
       // Berechnet die Gesamtausgaben                                        

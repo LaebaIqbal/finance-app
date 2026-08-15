@@ -30,7 +30,10 @@ class _SpendingScreenState extends State<SpendingScreen> {
 
   void openAddSpendingSheet() {                                          
         final nameController = TextEditingController();                      
-        final amountController = TextEditingController();                    
+        final amountController = TextEditingController();  
+
+        // Standardmäßig ausgewählte Kategorie:                                                            
+        SpendingCategory selectedCategory = SpendingCategory.food;         
                                                                              
         showModalBottomSheet(                                                
           context: context,                                                  
@@ -38,7 +41,9 @@ class _SpendingScreenState extends State<SpendingScreen> {
           shape: const RoundedRectangleBorder(                               
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),   
           ),                                                                 
-          builder: (context) {                                               
+          builder: (context) {  
+            return StatefulBuilder(                                                                              
+            builder: (context, setModalState) {                                              
             return Padding(                                                  
               padding: EdgeInsets.only(                                      
                 top: 20,                                                     
@@ -76,7 +81,30 @@ class _SpendingScreenState extends State<SpendingScreen> {
                       border: OutlineInputBorder(),                          
                     ),                                                       
                   ),                                                         
-                  const SizedBox(height: 16),                                
+                  const SizedBox(height: 16), 
+
+                  DropdownButtonFormField<SpendingCategory>(                                           
+                        value: selectedCategory,                                                           
+                        decoration: const InputDecoration(                                                 
+                          labelText: "Kategorie",                                                          
+                          border: OutlineInputBorder(),                                                    
+                        ),                                                                                 
+                        items: SpendingCategory.values.map((cat) {                                         
+                          return DropdownMenuItem(                                                         
+                            value: cat,                                                                    
+                            child: Text(cat.displayName),                                                  
+                          );                                                                               
+                        }).toList(),                                                                       
+                        onChanged: (newValue) {                                                            
+                          if (newValue != null) {                                                          
+                            setModalState(() {                                                             
+                              selectedCategory = newValue;                                                 
+                            });                                                                            
+                          }                                                                                
+                        },                                                                                 
+                      ),                                                                                   
+                      const SizedBox(height: 16),
+
                   ElevatedButton(                                            
                     style: ElevatedButton.styleFrom(                         
                       backgroundColor: Colors.deepPurple,                    
@@ -94,7 +122,8 @@ class _SpendingScreenState extends State<SpendingScreen> {
                             Spending(                                        
                               name: name,                                    
                               amount: amount,                                
-                              date: DateTime.now(),                          
+                              date: DateTime.now(), 
+                              category: selectedCategory,                         
                             ),                                               
                           );                                                 
                         });                                                  
@@ -104,10 +133,12 @@ class _SpendingScreenState extends State<SpendingScreen> {
                     child: const Text("Add", style:                   
   TextStyle(fontSize: 16)),                                                  
                   ),                                                         
-                ],                                                           
-              ),                                                             
-            );                                                               
-          },                                                                 
+                ], 
+                )                                                          
+              );                                                            
+            }                                                              
+            );
+          }                                                                 
         );                                                                   
       }                                                                      
           
@@ -251,7 +282,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              formatDate(spending.date),
+                              "${formatDate(spending.date)} • ${spending.category.displayName}",
                               style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey[600],
