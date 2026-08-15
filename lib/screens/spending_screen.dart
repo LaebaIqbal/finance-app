@@ -51,7 +51,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,              
                 children: [                                                  
                   const Text(                                                
-                    "Neue Ausgabe eintragen",                                
+                    "Add new spending",                                
                     textAlign: TextAlign.center,                             
                     style: TextStyle(                                        
                       fontSize: 18,                                          
@@ -62,7 +62,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                   TextField(                                                 
                     controller: nameController,                              
                     decoration: const InputDecoration(                       
-                      labelText: "Wofür? (z. B. Restaurant)",                
+                      labelText: "Description (e.g. Restaurant)",                
                       border: OutlineInputBorder(),                          
                     ),                                                       
                   ),                                                         
@@ -72,7 +72,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                     keyboardType: const TextInputType.                       
   numberWithOptions(decimal: true),                                          
                     decoration: const InputDecoration(                       
-                      labelText: "Betrag in €",                              
+                      labelText: "amount in €",                              
                       border: OutlineInputBorder(),                          
                     ),                                                       
                   ),                                                         
@@ -101,7 +101,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                         Navigator.pop(context);                              
                       }                                                      
                     },                                                       
-                    child: const Text("Hinzufügen", style:                   
+                    child: const Text("Add", style:                   
   TextStyle(fontSize: 16)),                                                  
                   ),                                                         
                 ],                                                           
