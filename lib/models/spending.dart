@@ -3,6 +3,7 @@ class Spending {
     double amount;
     DateTime date;
     SpendingCategory category;
+    bool isRecurring;
 
 
     Spending({
@@ -10,6 +11,7 @@ class Spending {
         required this.amount,
         required this.date,
         this.category = SpendingCategory.other,
+        this.isRecurring = false,
     });
 }
 

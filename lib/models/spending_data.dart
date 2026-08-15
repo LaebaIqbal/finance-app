@@ -11,7 +11,19 @@ import 'spending.dart';
   subtract(const Duration(days: 1)), category: SpendingCategory.food),                                        
         Spending(name: "Kino", amount: 30, date: DateTime.now().             
   subtract(const Duration(days: 3)), category: SpendingCategory.leisure),                                        
-      ];                                                                     
+      ];       
+
+      // Wiederkehrende Kosten filtern                                                                       
+    static List<Spending> get recurringSpendings =>                                                        
+        spendings.where((s) => s.isRecurring).toList();                                                    
+                                                                                                           
+    // Summe aller Fixkosten                                                                               
+    static double get totalRecurring =>                                                                    
+        recurringSpendings.fold(0.0, (sum, item) => sum + item.amount);                                    
+                                                                                                           
+    // Wie viel Prozent des Budgets sind durch Fixkosten gebunden?                                         
+    static double get fixedBudgetPercentage =>                                                             
+        monthlyBudget > 0 ? (totalRecurring / monthlyBudget) * 100 : 0;                                                               
                                                                              
       // Berechnet die Gesamtausgaben                                        
       static double get totalSpent =>                                        

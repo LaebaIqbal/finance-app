@@ -28,7 +28,8 @@ class _SpendingScreenState extends State<SpendingScreen> {
     return "$day.$month.${date.year}";
   }
 
-  void openAddSpendingSheet() {                                          
+  void openAddSpendingSheet() {        
+        bool isRecurring = false;                  
         final nameController = TextEditingController();                      
         final amountController = TextEditingController();  
 
@@ -105,6 +106,20 @@ class _SpendingScreenState extends State<SpendingScreen> {
                       ),                                                                                   
                       const SizedBox(height: 16),
 
+                  SwitchListTile(                                                                                        
+                    contentPadding: EdgeInsets.zero,                                                                     
+                    title: const Text("Fixed monthly expense"),                                                      
+                    subtitle: const Text("E.g subscription, contract or rent"),                                               
+                    value: isRecurring,                                                                                  
+                    activeColor: Colors.deepPurple,                                                                      
+                    onChanged: (val) {                                                                                   
+                      setModalState(() {                                                                                 
+                        isRecurring = val;                                                                               
+                      });                                                                                                
+                    },   
+                  ),
+                   const SizedBox(height: 16),
+
                   ElevatedButton(                                            
                     style: ElevatedButton.styleFrom(                         
                       backgroundColor: Colors.deepPurple,                    
@@ -123,7 +138,8 @@ class _SpendingScreenState extends State<SpendingScreen> {
                               name: name,                                    
                               amount: amount,                                
                               date: DateTime.now(), 
-                              category: selectedCategory,                         
+                              category: selectedCategory, 
+                              isRecurring: isRecurring,                      
                             ),                                               
                           );                                                 
                         });                                                  
@@ -134,11 +150,11 @@ class _SpendingScreenState extends State<SpendingScreen> {
   TextStyle(fontSize: 16)),                                                  
                   ),                                                         
                 ], 
-                )                                                          
+                ),                                                          
               );                                                            
-            }                                                              
+            },                                                              
             );
-          }                                                                 
+          },                                                                
         );                                                                   
       }                                                                      
           
