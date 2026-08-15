@@ -30,5 +30,14 @@ import 'spending.dart';
           spendings.fold(0.0, (sum, item) => sum + item.amount);             
                                                                              
       // Berechnet das verbleibende Restbudget                               
-      static double get remainingBudget => monthlyBudget - totalSpent;       
+      static double get remainingBudget => monthlyBudget - totalSpent;    
+
+      // Berechnet die Summe für jede Kategorie (für das Tortendiagramm)
+      static Map<SpendingCategory, double> get categoryTotals {
+        final Map<SpendingCategory, double> map = {};
+        for (var spending in spendings) {
+          map[spending.category] = (map[spending.category] ?? 0.0) + spending.amount;
+        }
+        return map;
+      }   
     }                                            

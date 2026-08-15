@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/spending.dart';
 import '../models/spending_data.dart';
+import 'dart:math';
 
 class SpendingScreen extends StatefulWidget {
   const SpendingScreen({super.key});
@@ -87,7 +88,7 @@ class _SpendingScreenState extends State<SpendingScreen> {
                   DropdownButtonFormField<SpendingCategory>(                                           
                         value: selectedCategory,                                                           
                         decoration: const InputDecoration(                                                 
-                          labelText: "Kategorie",                                                          
+                          labelText: "Category",                                                          
                           border: OutlineInputBorder(),                                                    
                         ),                                                                                 
                         items: SpendingCategory.values.map((cat) {                                         
@@ -250,6 +251,103 @@ class _SpendingScreenState extends State<SpendingScreen> {
 
             const SizedBox(height: 24),
 
+            Container(                                                                                 
+                  padding: const EdgeInsets.all(20),                                                       
+                  decoration: BoxDecoration(                                                               
+                    color: Colors.white,                                                                   
+                    borderRadius: BorderRadius.circular(20),                                               
+                    boxShadow: [                                                                           
+                      BoxShadow(                                                                           
+                        color: Colors.black.withOpacity(0.04),                                             
+                        blurRadius: 8,                                                                     
+                        offset: const Offset(0, 2),                                                        
+                      ),                                                                                   
+                    ],                                                                                     
+                  ),                                                                                       
+                  child: Row(                                                                              
+                    children: [                                                                            
+                      // 1. Der runde Donut-Kreis mit Gesamtsumme in der Mitte                             
+                      SizedBox(                                                                            
+                        width: 110,                                                                        
+                        height: 110,                                                                       
+                        child: CustomPaint(                                                                
+                          painter: PieChartPainter(                                                        
+                            categoryTotals: SpendingData.categoryTotals,                                   
+                            totalSpent: totalSpent,                                                        
+                          ),                                                                               
+                          child: Center(                                                                   
+                            child: Column(                                                                 
+                              mainAxisSize: MainAxisSize.min,                                              
+                              children: [                                                                  
+                                Text(                                                                      
+                                  "€ ${totalSpent.toStringAsFixed(0)}",                                    
+                                  style: const TextStyle(                                                  
+                                    fontSize: 16,                                                          
+                                    fontWeight: FontWeight.bold,                                           
+                                  ),                                                                       
+                                ),                                                                         
+                                Text(                                                                      
+                                  "Total",                                                                 
+                                  style: TextStyle(                                                        
+                                    fontSize: 11,                                                          
+                                    color: Colors.grey[600],                                               
+                                  ),                                                                       
+                                ),                                                                         
+                              ],                                                                           
+                            ),                                                                             
+                          ),                                                                               
+                        ),                                                                                 
+                      ),                                                                                   
+                      const SizedBox(width: 20),                                                           
+                                                                                                           
+                      // 2. Legende: Farbpunkte mit Kategorie-Namen & Prozent                              
+                      Expanded(                                                                            
+                        child: Column(                                                                     
+                          crossAxisAlignment: CrossAxisAlignment.start,                                    
+                          children: SpendingData.categoryTotals.entries.map((entry) {                      
+                            final percent = totalSpent > 0                                                 
+                                ? (entry.value / totalSpent * 100).toStringAsFixed(0)                      
+                                : "0";                                                                     
+                            return Padding(                                                                
+                              padding: const EdgeInsets.symmetric(vertical: 2.5),                          
+                              child: Row(                                                                  
+                                children: [                                                                
+                                  Container(                                                               
+                                    width: 8,                                                              
+                                    height: 8,                                                             
+                                    decoration: BoxDecoration(                                             
+                                      color: entry.key.color,                                              
+                                      shape: BoxShape.circle,                                              
+                                    ),                                                                     
+                                  ),                                                                       
+                                  const SizedBox(width: 8),                                                
+                                  Expanded(                                                                
+                                    child: Text(                                                           
+                                      entry.key.displayName,                                               
+                                      style: const TextStyle(fontSize: 12),                                
+                                      overflow: TextOverflow.ellipsis,                                     
+                                    ),                                                                     
+                                  ),                                                                       
+                                  Text(                                                                    
+                                    "$percent%",                                                           
+                                    style: TextStyle(                                                      
+                                      fontSize: 12,                                                        
+                                      fontWeight: FontWeight.bold,                                         
+                                      color: Colors.grey[700],                                             
+                                    ),                                                                     
+                                  ),                                                                       
+                                ],                                                                         
+                              ),                                                                           
+                            );                                                                             
+                          }).toList(),                                                                     
+                        ),                                                                                 
+                      ),                                                                                   
+                    ],                                                                                     
+                  ),                                                                                       
+                ),     
+
+                const SizedBox(height: 20),  
+
             // ─── 2. Überschrift ───
             const Text(
               "Your Spendings",
@@ -333,3 +431,43 @@ class _SpendingScreenState extends State<SpendingScreen> {
     );
   }
 }
+
+class PieChartPainter extends CustomPainter {                                                          
+      final Map<SpendingCategory, double> categoryTotals;                                                  
+      final double totalSpent;                                                                             
+                                                                                                           
+      PieChartPainter({required this.categoryTotals, required this.totalSpent});                           
+                                                                                                           
+      @override                                                                                            
+      void paint(Canvas canvas, Size size) {                                                               
+        if (totalSpent <= 0) return;                                                                       
+                                                                                                           
+        final center = Offset(size.width / 2, size.height / 2);                                            
+        final radius = min(size.width / 2, size.height / 2);                                               
+        const strokeWidth = 16.0;                                                                          
+                                                                                                           
+        final paint = Paint()                                                                              
+          ..style = PaintingStyle.stroke                                                                   
+          ..strokeWidth = strokeWidth                                                                      
+          ..strokeCap = StrokeCap.butt;                                                                    
+                                                                                                           
+        double startAngle = -pi / 2; // Oben bei 12 Uhr beginnen                                           
+                                                                                                           
+        for (var entry in categoryTotals.entries) {                                                        
+          final sweepAngle = (entry.value / totalSpent) * 2 * pi;                                          
+          paint.color = entry.key.color;                                                                   
+          canvas.drawArc(                                                                                  
+            Rect.fromCircle(center: center, radius: radius - strokeWidth / 2),                             
+            startAngle,
+            sweepAngle,
+            false,
+            paint,
+          );
+          startAngle += sweepAngle;
+        }
+      }
+  
+      @override
+      bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+    }
+  
